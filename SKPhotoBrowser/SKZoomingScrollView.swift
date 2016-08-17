@@ -275,7 +275,7 @@ public class SKZoomingScrollView: UIScrollView, UIScrollViewDelegate, SKDetectin
             if photoBrowser?.areControlsHidden() == false && photoBrowser?.enableSingleTapDismiss == true {
 //                photoBrowser?.determineAndClose()
             }
-            photoBrowser?.toggleControls()
+//            photoBrowser?.toggleControls()
         }
     }
     

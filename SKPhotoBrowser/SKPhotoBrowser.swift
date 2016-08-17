@@ -1130,7 +1130,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     }
     
     public func hideControls(timer: NSTimer) {
-        setControlsHidden(true, animated: true, permanent: false)
+        setControlsHidden(!enableSingleTapDismiss, animated: true, permanent: false)
     }
     
     public func toggleControls() {
@@ -1283,7 +1283,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     }
     
     public func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        setControlsHidden(true, animated: true, permanent: false)
+        setControlsHidden(!enableSingleTapDismiss, animated: true, permanent: false)
     }
     
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
