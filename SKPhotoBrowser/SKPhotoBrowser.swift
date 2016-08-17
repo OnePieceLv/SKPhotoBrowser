@@ -104,8 +104,9 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     public var shareExtraCaption: String? = nil
     public var actionButtonTitles: [String]?
     public var displayToolbar: Bool = true
-    public var displayCounterLabel: Bool = true
-    public var displayBackAndForwardButton: Bool = true
+    public var displayCounterPageControl: Bool = true
+//    public var displayCounterLabel: Bool = true
+//    public var displayBackAndForwardButton: Bool = true
     public var disableVerticalSwipe: Bool = false
     public var displayDeleteButton = false
     public var displayCloseButton = true // default is true
@@ -126,11 +127,12 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     private var applicationWindow: UIWindow!
     private var backgroundView: UIView!
     private var toolBar: UIToolbar!
-    private var toolCounterLabel: UILabel!
+//    private var toolCounterLabel: UILabel!
+    private var toolCountPageControl:UIPageControl!
     private var toolCounterButton: UIBarButtonItem!
-    private var toolPreviousButton: UIBarButtonItem!
+//    private var toolPreviousButton: UIBarButtonItem!
     private var toolActionButton: UIBarButtonItem!
-    private var toolNextButton: UIBarButtonItem!
+//    private var toolNextButton: UIBarButtonItem!
     private var pagingScrollView: UIScrollView!
     private var panGesture: UIPanGestureRecognizer!
     // MARK: close button
@@ -288,34 +290,40 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
         }
         
         // arrows:back
-        let previousBtn = UIButton(type: .Custom)
-        let previousImage = UIImage(named: "SKPhotoBrowser.bundle/images/btn_common_back_wh", inBundle: bundle, compatibleWithTraitCollection: nil) ?? UIImage()
-        previousBtn.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
-        previousBtn.imageEdgeInsets = UIEdgeInsetsMake(13.25, 17.25, 13.25, 17.25)
-        previousBtn.setImage(previousImage, forState: .Normal)
-        previousBtn.addTarget(self, action: #selector(self.gotoPreviousPage), forControlEvents: .TouchUpInside)
-        previousBtn.contentMode = .Center
-        toolPreviousButton = UIBarButtonItem(customView: previousBtn)
+//        let previousBtn = UIButton(type: .Custom)
+//        let previousImage = UIImage(named: "SKPhotoBrowser.bundle/images/btn_common_back_wh", inBundle: bundle, compatibleWithTraitCollection: nil) ?? UIImage()
+//        previousBtn.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
+//        previousBtn.imageEdgeInsets = UIEdgeInsetsMake(13.25, 17.25, 13.25, 17.25)
+//        previousBtn.setImage(previousImage, forState: .Normal)
+//        previousBtn.addTarget(self, action: #selector(self.gotoPreviousPage), forControlEvents: .TouchUpInside)
+//        previousBtn.contentMode = .Center
+//        toolPreviousButton = UIBarButtonItem(customView: previousBtn)
         
         // arrows:next
-        let nextBtn = UIButton(type: .Custom)
-        let nextImage = UIImage(named: "SKPhotoBrowser.bundle/images/btn_common_forward_wh", inBundle: bundle, compatibleWithTraitCollection: nil) ?? UIImage()
-        nextBtn.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
-        nextBtn.imageEdgeInsets = UIEdgeInsetsMake(13.25, 17.25, 13.25, 17.25)
-        nextBtn.setImage(nextImage, forState: .Normal)
-        nextBtn.addTarget(self, action: #selector(self.gotoNextPage), forControlEvents: .TouchUpInside)
-        nextBtn.contentMode = .Center
-        toolNextButton = UIBarButtonItem(customView: nextBtn)
+//        let nextBtn = UIButton(type: .Custom)
+//        let nextImage = UIImage(named: "SKPhotoBrowser.bundle/images/btn_common_forward_wh", inBundle: bundle, compatibleWithTraitCollection: nil) ?? UIImage()
+//        nextBtn.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
+//        nextBtn.imageEdgeInsets = UIEdgeInsetsMake(13.25, 17.25, 13.25, 17.25)
+//        nextBtn.setImage(nextImage, forState: .Normal)
+//        nextBtn.addTarget(self, action: #selector(self.gotoNextPage), forControlEvents: .TouchUpInside)
+//        nextBtn.contentMode = .Center
+//        toolNextButton = UIBarButtonItem(customView: nextBtn)
         
-        toolCounterLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 95, height: 40))
-        toolCounterLabel.textAlignment = .Center
-        toolCounterLabel.backgroundColor = .clearColor()
-        toolCounterLabel.font  = UIFont(name: "Helvetica", size: 16.0)
-        toolCounterLabel.textColor = .whiteColor()
-        toolCounterLabel.shadowColor = .darkTextColor()
-        toolCounterLabel.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        toolCountPageControl = UIPageControl(frame: CGRectMake(0,0,95,40))
+        toolCountPageControl.hidesForSinglePage = true
+        toolCountPageControl.numberOfPages = numberOfPhotos
+        toolCountPageControl.addTarget(self, action: #selector(self.pageControlChangeValue(_:)), forControlEvents: .ValueChanged)
         
-        toolCounterButton = UIBarButtonItem(customView: toolCounterLabel)
+//        toolCounterLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 95, height: 40))
+//        toolCounterLabel.textAlignment = .Center
+//        toolCounterLabel.backgroundColor = .clearColor()
+//        toolCounterLabel.font  = UIFont(name: "Helvetica", size: 16.0)
+//        toolCounterLabel.textColor = .whiteColor()
+//        toolCounterLabel.shadowColor = .darkTextColor()
+//        toolCounterLabel.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        
+        
+        toolCounterButton = UIBarButtonItem(customView: toolCountPageControl)
         
         // starting setting
         setCustomSetting()
@@ -565,23 +573,28 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         var items = [UIBarButtonItem]()
         items.append(flexSpace)
-        if numberOfPhotos > 1 && displayBackAndForwardButton {
-            items.append(toolPreviousButton)
-        }
-        if displayCounterLabel {
+        
+//        if numberOfPhotos > 1 && displayBackAndForwardButton {
+//            items.append(toolPreviousButton)
+//        }
+        
+        if displayCounterPageControl {
             items.append(flexSpace)
             items.append(toolCounterButton)
             items.append(flexSpace)
         } else {
             items.append(flexSpace)
         }
-        if numberOfPhotos > 1 && displayBackAndForwardButton {
-            items.append(toolNextButton)
-        }
+        
+//        if numberOfPhotos > 1 && displayBackAndForwardButton {
+//            items.append(toolNextButton)
+//        }
+        
         items.append(flexSpace)
         if displayAction {
             items.append(toolActionButton)
         }
+        
         toolBar.setItems(items, animated: false)
         updateToolbar()
         
@@ -704,14 +717,15 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     
     // MARK: - Toolbar
     public func updateToolbar() {
-        if numberOfPhotos > 1 {
-            toolCounterLabel.text = "\(currentPageIndex + 1) / \(numberOfPhotos)"
-        } else {
-            toolCounterLabel.text = nil
-        }
+        toolCountPageControl.currentPage = currentPageIndex
+//        if numberOfPhotos > 1 {
+//            toolCounterLabel.text = "\(currentPageIndex + 1) / \(numberOfPhotos)"
+//        } else {
+//            toolCounterLabel.text = nil
+//        }
         
-        toolPreviousButton.enabled = (currentPageIndex > 0)
-        toolNextButton.enabled = (currentPageIndex < numberOfPhotos - 1)
+//        toolPreviousButton.enabled = (currentPageIndex > 0)
+//        toolNextButton.enabled = (currentPageIndex < numberOfPhotos - 1)
     }
     
     // MARK: - panGestureRecognized
@@ -984,6 +998,11 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     
     public func photoAtIndex(index: Int) -> SKPhotoProtocol {
         return photos[index]
+    }
+    
+    public func pageControlChangeValue(sender:UIPageControl) {
+//        self.currentPageIndex = sender.currentPage
+        self.jumpToPageAtIndex(sender.currentPage)
     }
     
     public func gotoPreviousPage() {
