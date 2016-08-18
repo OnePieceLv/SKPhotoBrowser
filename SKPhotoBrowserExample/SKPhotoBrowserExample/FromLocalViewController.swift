@@ -66,6 +66,7 @@ extension FromLocalViewController {
         browser.delegate = self
         browser.statusBarStyle = .LightContent
         browser.enableSingleTapDismiss = true
+
         presentViewController(browser, animated: true, completion: {})
     }
     
