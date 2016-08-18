@@ -62,13 +62,13 @@ extension FromLocalViewController {
             return
         }
         let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedFromView: cell)
-//        let browser = SKPhotoBrowser(photos: images)
         browser.initializePageIndex(indexPath.row)
         browser.delegate = self
         browser.statusBarStyle = .LightContent
         browser.enableSingleTapDismiss = true
-        
-        presentViewController(browser, animated: true, completion: {})
+        self.addChildViewController(browser)
+        self.view.addSubview(browser.view)
+//        presentViewController(browser, animated: true, completion: {})
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
@@ -112,6 +112,11 @@ extension FromLocalViewController {
     
     func viewForPhoto(browser: SKPhotoBrowser, index: Int) -> UIView? {
         return collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0))
+    }
+    
+    func modalViewControllerDidClickedDismissButton(browser:SKPhotoBrowser) -> Void {
+        browser.view.removeFromSuperview()
+        browser.removeFromParentViewController()
     }
 }
 

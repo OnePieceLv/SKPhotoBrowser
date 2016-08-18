@@ -350,6 +350,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     
     override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
         reloadData()
         
         var i = 0
@@ -357,6 +358,11 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
             photo.index = i
             i = i + 1
         }
+    }
+    
+    public override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override public func viewWillLayoutSubviews() {
