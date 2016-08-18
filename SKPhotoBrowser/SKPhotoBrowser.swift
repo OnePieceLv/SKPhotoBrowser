@@ -71,6 +71,9 @@ import UIKit
      - Returns: the view to animate to
      */
     optional func viewForPhoto(browser: SKPhotoBrowser, index: Int) -> UIView?
+    
+    optional func modalViewControllerDidClickedDismissButton(browser:SKPhotoBrowser)
+    
 }
 
 public let SKPHOTO_LOADING_DID_END_NOTIFICATION = "photoLoadingDidEndNotification"
@@ -936,9 +939,10 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
         senderViewForAnimation?.hidden = false
         prepareForClosePhotoBrowser()
         
-        dismissViewControllerAnimated(true) {
-            self.delegate?.didDismissAtPageIndex?(self.currentPageIndex)
-        }
+        self.delegate?.modalViewControllerDidClickedDismissButton?(self)
+        self.delegate?.didDismissAtPageIndex?(self.currentPageIndex)
+//        dismissViewControllerAnimated(true) {
+//        }
     }
 
     public func determineAndClose() {
