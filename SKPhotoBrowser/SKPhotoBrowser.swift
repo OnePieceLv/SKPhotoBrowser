@@ -71,6 +71,7 @@ import UIKit
      - Returns: the view to animate to
      */
     optional func viewForPhoto(browser: SKPhotoBrowser, index: Int) -> UIView?
+    
 }
 
 public let SKPHOTO_LOADING_DID_END_NOTIFICATION = "photoLoadingDidEndNotification"
@@ -354,6 +355,10 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
             photo.index = i
             i = i + 1
         }
+    }
+    
+    public override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     
     override public func viewWillLayoutSubviews() {
