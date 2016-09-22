@@ -129,7 +129,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     private var backgroundView: UIView!
     private var toolBar: UIToolbar!
 //    private var toolCounterLabel: UILabel!
-    private var toolCountPageControl:UIPageControl!
+    private var toolCountPageControl: UIPageControl!
     private var toolCounterButton: UIBarButtonItem!
 //    private var toolPreviousButton: UIBarButtonItem!
     private var toolActionButton: UIBarButtonItem!
@@ -310,7 +310,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
 //        nextBtn.contentMode = .Center
 //        toolNextButton = UIBarButtonItem(customView: nextBtn)
         
-        toolCountPageControl = UIPageControl(frame: CGRectMake(0,0,95,40))
+        toolCountPageControl = UIPageControl(frame: CGRect(x: 0, y: 0, width: 95, height: 40))
         toolCountPageControl.hidesForSinglePage = true
         toolCountPageControl.numberOfPages = numberOfPhotos
         toolCountPageControl.addTarget(self, action: #selector(self.pageControlChangeValue(_:)), forControlEvents: .ValueChanged)
@@ -435,9 +435,9 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
             closeButton = UIButton(type: UIButtonType.Custom)
             closeButton.setImage(doneImage, forState: UIControlState.Normal)
             if UI_USER_INTERFACE_IDIOM() == .Phone {
-                closeButton.imageEdgeInsets = UIEdgeInsetsMake(15.25, 15.25, 15.25, 15.25)
+                closeButton.imageEdgeInsets = UIEdgeInsets(top: 15.25, left: 15.25, bottom: 15.25, right: 15.25)
             } else {
-                closeButton.imageEdgeInsets = UIEdgeInsetsMake(12, 12, 12, 12)
+                closeButton.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
             }
             closeButton.backgroundColor = .clearColor()
             closeButton.addTarget(self, action: #selector(self.closeButtonPressed(_:)), forControlEvents: UIControlEvents.TouchUpInside)
@@ -460,7 +460,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
             if UI_USER_INTERFACE_IDIOM() == .Phone {
                 deleteButton.imageEdgeInsets = UIEdgeInsets(top: 15.25, left: 15.25, bottom: 15.25, right: 15.25)
             } else {
-                deleteButton.imageEdgeInsets = UIEdgeInsetsMake(12.3, 12.3, 12.3, 12.3)
+                deleteButton.imageEdgeInsets = UIEdgeInsets(top: 12.3, left: 12.3, bottom: 12.3, right: 12.3)
             }
             deleteButton.setImage(image, forState: .Normal)
             deleteButton.addTarget(self, action: #selector(self.deleteButtonPressed(_:)), forControlEvents: UIControlEvents.TouchUpInside)
@@ -966,7 +966,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
         sender.layer.renderInContext(UIGraphicsGetCurrentContext()!)
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        return result
+        return result ?? UIImage()
     }
     
     // MARK: - paging
@@ -1004,7 +1004,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
         return photos[index]
     }
     
-    public func pageControlChangeValue(sender:UIPageControl) {
+    public func pageControlChangeValue(sender: UIPageControl) {
 //        self.currentPageIndex = sender.currentPage
         self.jumpToPageAtIndex(sender.currentPage)
     }
@@ -1020,8 +1020,8 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
     public func tilePages() {
         let visibleBounds = pagingScrollView.bounds
         
-        var firstIndex = Int(floor((CGRectGetMinX(visibleBounds) + 10 * 2) / CGRectGetWidth(visibleBounds)))
-        var lastIndex  = Int(floor((CGRectGetMaxX(visibleBounds) - 10 * 2 - 1) / CGRectGetWidth(visibleBounds)))
+        var firstIndex = Int(floor((visibleBounds.minX + 10 * 2) / visibleBounds.width))
+        var lastIndex  = Int(floor((visibleBounds.maxX - 10 * 2 - 1) / visibleBounds.width))
         if firstIndex < 0 {
             firstIndex = 0
         }
@@ -1270,7 +1270,7 @@ public class SKPhotoBrowser: UIViewController, UIScrollViewDelegate {
         
         // Calculate current page
         let visibleBounds = pagingScrollView.bounds
-        var index = Int(floor(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)))
+        var index = Int(floor(visibleBounds.midX / visibleBounds.width))
         
         if index < 0 {
             index = 0
