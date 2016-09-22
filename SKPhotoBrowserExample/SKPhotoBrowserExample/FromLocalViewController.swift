@@ -68,9 +68,16 @@ extension FromLocalViewController {
         let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedFromView: cell)
         browser.initializePageIndex(indexPath.row)
         browser.delegate = self
+
 //        browser.updateCloseButton(UIImage(named: "image1.jpg")!)
         
         present(browser, animated: true, completion: {})
+//=======
+//        browser.statusBarStyle = .LightContent
+//        browser.enableSingleTapDismiss = true
+//
+//        presentViewController(browser, animated: true, completion: {})
+//>>>>>>> feature/pageControl
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
@@ -115,6 +122,7 @@ extension FromLocalViewController {
     func viewForPhoto(_ browser: SKPhotoBrowser, index: Int) -> UIView? {
         return collectionView.cellForItem(at: IndexPath(item: index, section: 0))
     }
+    
 }
 
 // MARK: - private
