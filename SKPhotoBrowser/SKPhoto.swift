@@ -12,18 +12,20 @@ import UIKit
     var underlyingImage: UIImage! { get }
     var caption: String! { get }
     var index: Int { get set}
+    var contentMode: UIViewContentMode { get set }
     func loadUnderlyingImageAndNotify()
     func checkCache()
 }
 
 // MARK: - SKPhoto
-public class SKPhoto: NSObject, SKPhotoProtocol {
+open class SKPhoto: NSObject, SKPhotoProtocol {
     
-    public var underlyingImage: UIImage!
-    public var photoURL: String!
-    public var shouldCachePhotoURLImage: Bool = false
-    public var caption: String!
-    public var index: Int = 0
+    open var underlyingImage: UIImage!
+    open var photoURL: String!
+    open var contentMode: UIViewContentMode = .scaleAspectFill
+    open var shouldCachePhotoURLImage: Bool = false
+    open var caption: String!
+    open var index: Int = 0
 
     override init() {
         super.init()
@@ -45,50 +47,56 @@ public class SKPhoto: NSObject, SKPhotoProtocol {
         underlyingImage = holder
     }
     
-    public func checkCache() {
-        if photoURL != nil && shouldCachePhotoURLImage {
-            if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {
-                let request = NSURLRequest(URL: NSURL(string: photoURL)!)
-                if let img = SKCache.sharedCache.imageForRequest(request) {
-                    underlyingImage = img
-                }
-            } else {
-                if let img = SKCache.sharedCache.imageForKey(photoURL) {
-                    underlyingImage = img
-                }
+    open func checkCache() {
+        guard let photoURL = photoURL else {
+            return
+        }
+        guard shouldCachePhotoURLImage else {
+            return
+        }
+        
+        if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {
+            let request = URLRequest(url: URL(string: photoURL)!)
+            if let img = SKCache.sharedCache.imageForRequest(request) {
+                underlyingImage = img
+            }
+        } else {
+            if let img = SKCache.sharedCache.imageForKey(photoURL) {
+                underlyingImage = img
             }
         }
     }
     
-    public func loadUnderlyingImageAndNotify() {
+    open func loadUnderlyingImageAndNotify() {
         
-        if underlyingImage != nil && photoURL == nil {
+        if underlyingImage != nil {
             loadUnderlyingImageComplete()
+            return
         }
         
         if photoURL != nil {
             // Fetch Image
-            let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-            if let nsURL = NSURL(string: photoURL) {
-                var task: NSURLSessionDataTask!
-                task = session.dataTaskWithURL(nsURL, completionHandler: { [weak self](response: NSData?, data: NSURLResponse?, error: NSError?) in
+            let session = URLSession(configuration: URLSessionConfiguration.default)
+            if let nsURL = URL(string: photoURL) {
+                var task: URLSessionDataTask!
+                task = session.dataTask(with: nsURL, completionHandler: { [weak self] (data, response, error) in
                     if let _self = self {
                         
                         if error != nil {
-                            dispatch_async(dispatch_get_main_queue()) {
+                            DispatchQueue.main.async {
                                 _self.loadUnderlyingImageComplete()
                             }
                         }
                         
-                        if let res = response, let image = UIImage(data: res) {
+                        if let data = data, let response = response, let image = UIImage(data: data) {
                             if _self.shouldCachePhotoURLImage {
                                 if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {
-                                    SKCache.sharedCache.setImageData(response!, response: data!, request: task.originalRequest!)
+                                    SKCache.sharedCache.setImageData(data, response: response, request: task.originalRequest!)
                                 } else {
                                     SKCache.sharedCache.setImage(image, forKey: _self.photoURL)
                                 }
                             }
-                            dispatch_async(dispatch_get_main_queue()) {
+                            DispatchQueue.main.async {
                                 _self.underlyingImage = image
                                 _self.loadUnderlyingImageComplete()
                             }
@@ -101,8 +109,8 @@ public class SKPhoto: NSObject, SKPhotoProtocol {
         }
     }
 
-    public func loadUnderlyingImageComplete() {
-        NSNotificationCenter.defaultCenter().postNotificationName(SKPHOTO_LOADING_DID_END_NOTIFICATION, object: self)
+    open func loadUnderlyingImageComplete() {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: SKPHOTO_LOADING_DID_END_NOTIFICATION), object: self)
     }
     
 }
@@ -110,15 +118,15 @@ public class SKPhoto: NSObject, SKPhotoProtocol {
 // MARK: - Static Function
 
 extension SKPhoto {
-    public static func photoWithImage(image: UIImage) -> SKPhoto {
+    public static func photoWithImage(_ image: UIImage) -> SKPhoto {
         return SKPhoto(image: image)
     }
     
-    public static func photoWithImageURL(url: String) -> SKPhoto {
+    public static func photoWithImageURL(_ url: String) -> SKPhoto {
         return SKPhoto(url: url)
     }
     
-    public static func photoWithImageURL(url: String, holder: UIImage?) -> SKPhoto {
+    public static func photoWithImageURL(_ url: String, holder: UIImage?) -> SKPhoto {
         return SKPhoto(url: url, holder: holder)
     }
 }
