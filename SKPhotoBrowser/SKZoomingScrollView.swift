@@ -260,17 +260,6 @@ extension SKZoomingScrollView: UIScrollViewDelegate {
         setNeedsLayout()
         layoutIfNeeded()
     }
-//<<<<<<< HEAD
-//    
-//    
-//    // MARK: - SKDetectingViewDelegate
-//    func handleSingleTap(view: UIView, touch: UITouch) {
-//        if photoBrowser?.enableZoomBlackArea == true {
-//            if photoBrowser?.areControlsHidden() == false && photoBrowser?.enableSingleTapDismiss == true {
-////                photoBrowser?.determineAndClose()
-//            }
-////            photoBrowser?.toggleControls()
-//=======
 }
 
 // MARK: - SKDetectingImageViewDelegate
@@ -288,7 +277,6 @@ extension SKZoomingScrollView: SKDetectingViewDelegate {
             browser.determineAndClose()
         } else {
             browser.toggleControls()
-//>>>>>>> swift3
         }
     }
     
