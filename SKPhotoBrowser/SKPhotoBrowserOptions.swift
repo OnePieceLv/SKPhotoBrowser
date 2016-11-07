@@ -15,12 +15,12 @@ public struct SKPhotoBrowserOptions {
     public static var shareExtraCaption: String? = nil
     public static var actionButtonTitles: [String]?
     
-    public static var displayToolbar: Bool = true
-    public static var displayCounterLabel: Bool = true
+    public static var displayToolbar: Bool = false
+    public static var displayCounterLabel: Bool = false
     public static var displayBackAndForwardButton: Bool = true
     public static var disableVerticalSwipe: Bool = false
     
-    public static var displayCloseButton: Bool = true
+    public static var displayCloseButton: Bool = false
     public static var displayDeleteButton: Bool = false
     
     public static var displayHorizontalScrollIndicator: Bool = true
@@ -28,7 +28,7 @@ public struct SKPhotoBrowserOptions {
     
     public static var bounceAnimation: Bool = false
     public static var enableZoomBlackArea: Bool = true
-    public static var enableSingleTapDismiss: Bool = false
+    public static var enableSingleTapDismiss: Bool = true
     
     public static var backgroundColor: UIColor = .black
     public static var textAndIconColor: UIColor = .white

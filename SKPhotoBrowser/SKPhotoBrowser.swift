@@ -16,6 +16,8 @@ public let SKPHOTO_LOADING_DID_END_NOTIFICATION = "photoLoadingDidEndNotificatio
 open class SKPhotoBrowser: UIViewController {
     
     let pageIndexTagOffset: Int = 1000
+    
+    fileprivate var pageControl: UIPageControl = UIPageControl()
 
     fileprivate var closeButton: SKCloseButton!
     fileprivate var deleteButton: SKDeleteButton!
@@ -114,6 +116,7 @@ open class SKPhotoBrowser: UIViewController {
         configureCloseButton()
         configureDeleteButton()
         configureToolbar()
+        configurePageControl()
         
         animator.willPresent(self)
     }
@@ -139,6 +142,8 @@ open class SKPhotoBrowser: UIViewController {
         pagingScrollView.updateFrame(view.bounds, currentPageIndex: currentPageIndex)
         
         toolbar.frame = frameForToolbarAtOrientation()
+        
+        pageControl.frame = frameForToolbarAtOrientation()
         
         // where did start
         delegate?.didShowPhotoAtIndex?(currentPageIndex)
@@ -187,6 +192,7 @@ open class SKPhotoBrowser: UIViewController {
         
 
         toolbar.updateToolbar(currentPageIndex)
+        pageControl.currentPage = currentPageIndex
         
         // reset local cache
         pagingScrollView.reload()
@@ -280,6 +286,7 @@ public extension SKPhotoBrowser {
             }
             isEndAnimationByToolBar = false
             toolbar.updateToolbar(currentPageIndex)
+            pageControl.currentPage = currentPageIndex
             
             let pageFrame = frameForPageAtIndex(index)
             pagingScrollView.animate(pageFrame)
@@ -565,21 +572,27 @@ private extension SKPhotoBrowser {
         view.addSubview(closeButton)
     }
     
-//<<<<<<< HEAD
-//    public func hideControls(timer: NSTimer) {
-//        setControlsHidden(!enableSingleTapDismiss, animated: true, permanent: false)
-//=======
     func configureDeleteButton() {
         deleteButton = SKDeleteButton(frame: .zero)
         deleteButton.addTarget(self, action: #selector(deleteButtonPressed(_:)), for: .touchUpInside)
         deleteButton.isHidden = !SKPhotoBrowserOptions.displayDeleteButton
         view.addSubview(deleteButton)
-//>>>>>>> swift3
     }
     
     func configureToolbar() {
         toolbar = SKToolbar(frame: frameForToolbarAtOrientation(), browser: self)
         view.addSubview(toolbar)
+    }
+    
+    func configurePageControl() -> Void {
+        pageControl.hidesForSinglePage = true
+        pageControl.numberOfPages = numberOfPhotos
+        pageControl.addTarget(self, action: #selector(selectPageControl(sender:)), for: .valueChanged)
+        view.addSubview(pageControl)
+    }
+    
+    @objc func selectPageControl(sender: UIPageControl) -> Void {
+        jumpToPageAtIndex(sender.currentPage)
     }
     
     func setControlsHidden(_ hidden: Bool, animated: Bool, permanent: Bool) {
@@ -608,6 +621,7 @@ private extension SKPhotoBrowser {
         if !permanent {
             hideControlsAfterDelay()
         }
+        
         setNeedsStatusBarAppearanceUpdate()
     }
     
@@ -624,6 +638,7 @@ private extension SKPhotoBrowser {
                 gotoPreviousPage()
             }
             toolbar.updateToolbar(currentPageIndex)
+            pageControl.currentPage = currentPageIndex
             
         } else if photos.count == 1 {
             dismissPhotoBrowser(animated: true)
@@ -654,6 +669,7 @@ extension SKPhotoBrowser: UIScrollViewDelegate {
         if currentPageIndex != previousCurrentPage {
             delegate?.didShowPhotoAtIndex?(currentPageIndex)
             toolbar.updateToolbar(currentPageIndex)
+            pageControl.currentPage = currentPageIndex
         }
     }
     

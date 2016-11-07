@@ -68,16 +68,17 @@ extension FromLocalViewController {
         let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedFromView: cell)
         browser.initializePageIndex(indexPath.row)
         browser.delegate = self
-//<<<<<<< HEAD
-//        browser.statusBarStyle = .LightContent
-//        browser.enableSingleTapDismiss = true
-//
-//        presentViewController(browser, animated: true, completion: {})
-//=======
+        SKPhotoBrowserOptions.bounceAnimation = true
+        SKPhotoBrowserOptions.displayDeleteButton = true
+        SKPhotoBrowserOptions.displayAction = false
+        SKPhotoBrowserOptions.enableSingleTapDismiss = true
+        SKPhotoBrowserOptions.displayToolbar = false
+        SKPhotoBrowserOptions.displayCounterLabel = false
+        SKPhotoBrowserOptions.displayStatusbar = false
+
 //        browser.updateCloseButton(UIImage(named: "image1.jpg")!)
         
         present(browser, animated: true, completion: {})
-//>>>>>>> swift3
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
