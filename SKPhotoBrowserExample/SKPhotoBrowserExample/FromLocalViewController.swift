@@ -25,11 +25,11 @@ class FromLocalViewController: UIViewController, UICollectionViewDataSource, UIC
         super.didReceiveMemoryWarning()
     }
     
-    override var prefersStatusBarHidden : Bool {
+    override var prefersStatusBarHidden: Bool {
         return false
     }
     
-    override var preferredStatusBarStyle : UIStatusBarStyle {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 }

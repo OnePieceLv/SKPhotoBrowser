@@ -154,7 +154,6 @@ open class SKPhotoBrowser: UIViewController {
 
     // MARK: - Notification
     open func handleSKPhotoLoadingDidEndNotification(_ notification: Notification) {
-//>>>>>>> swift3
         guard let photo = notification.object as? SKPhotoProtocol else {
             return
         }

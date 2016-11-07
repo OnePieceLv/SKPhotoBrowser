@@ -28,7 +28,12 @@ class FromWebViewController: UIViewController, SKPhotoBrowserDelegate {
         let browser = SKPhotoBrowser(photos: createWebPhotos())
         browser.initializePageIndex(0)
         browser.delegate = self
-//        browser.enableSingleTapDismiss = true
+        SKPhotoBrowserOptions.bounceAnimation = true
+        SKPhotoBrowserOptions.displayDeleteButton = true
+        SKPhotoBrowserOptions.displayAction = false
+        SKPhotoBrowserOptions.enableSingleTapDismiss = true
+        SKPhotoBrowserOptions.displayCloseButton = false
+        //        browser.enableSingleTapDismiss = true
         
         present(browser, animated: true, completion: nil)
     }
