@@ -27,7 +27,7 @@ open class SKPhotoBrowser: UIViewController {
     open var activityItemProvider: UIActivityItemProvider? = nil
     fileprivate var panGesture: UIPanGestureRecognizer!
 
-      fileprivate var applicationWindow: UIWindow!
+    fileprivate var applicationWindow: UIWindow!
     fileprivate lazy var pagingScrollView: SKPagingScrollView = SKPagingScrollView(frame: self.view.frame, browser: self)
     var backgroundView: UIView!
     
@@ -111,13 +111,11 @@ open class SKPhotoBrowser: UIViewController {
     // MARK: - override
     override open func viewDidLoad() {
         super.viewDidLoad()
-        
         configureAppearance()
         configureCloseButton()
         configureDeleteButton()
         configureToolbar()
         configurePageControl()
-        
         animator.willPresent(self)
     }
 
@@ -190,7 +188,6 @@ open class SKPhotoBrowser: UIViewController {
     open func performLayout() {
         isPerformingLayout = true
         
-
         toolbar.updateToolbar(currentPageIndex)
         pageControl.currentPage = currentPageIndex
         
@@ -639,6 +636,7 @@ private extension SKPhotoBrowser {
             }
             toolbar.updateToolbar(currentPageIndex)
             pageControl.currentPage = currentPageIndex
+            pageControl.numberOfPages = numberOfPhotos
             
         } else if photos.count == 1 {
             dismissPhotoBrowser(animated: true)

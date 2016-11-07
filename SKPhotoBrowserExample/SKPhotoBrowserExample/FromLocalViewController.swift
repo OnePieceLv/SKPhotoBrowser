@@ -68,6 +68,7 @@ extension FromLocalViewController {
         let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedFromView: cell)
         browser.initializePageIndex(indexPath.row)
         browser.delegate = self
+        SKPhotoBrowserOptions.displayDeleteButton = true
 //        SKPhotoBrowserOptions.bounceAnimation = true
 //        SKPhotoBrowserOptions.displayDeleteButton = true
 //        SKPhotoBrowserOptions.displayAction = false
