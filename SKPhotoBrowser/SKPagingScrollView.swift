@@ -23,7 +23,6 @@ class SKPagingScrollView: UIScrollView {
         super.init(coder: aDecoder)
     }
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -166,19 +165,19 @@ class SKPagingScrollView: UIScrollView {
     }
     
     func pageDisplayedAtIndex(_ index: Int) -> SKZoomingScrollView? {
-        for page in visiblePages {
-            if page.tag - pageIndexTagOffset == index {
-                return page
-            }
+        for page in visiblePages where page.tag - pageIndexTagOffset == index {
+//            if page.tag - pageIndexTagOffset == index {
+//            }
+            return page
         }
         return nil
     }
     
     func pageDisplayingAtPhoto(_ photo: SKPhotoProtocol) -> SKZoomingScrollView? {
-        for page in visiblePages {
-            if page.photo === photo {
-                return page
-            }
+        for page in visiblePages where page.photo === photo {
+//            if page.photo === photo {
+//            }
+            return page
         }
         return nil
     }
@@ -231,8 +230,3 @@ private extension SKPagingScrollView {
         return lastIndex
     }
 }
-
-
-
-
-

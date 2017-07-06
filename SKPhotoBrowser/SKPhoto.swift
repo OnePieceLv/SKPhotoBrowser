@@ -88,7 +88,6 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
                             }
                         }
                         
-
                         if let data = data, let response = response, let image = UIImage(data: data) {
                             if _self.shouldCachePhotoURLImage {
                                 if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {

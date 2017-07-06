@@ -16,7 +16,6 @@ class SKButton: UIButton {
     var hideFrame: CGRect!
     var insets: UIEdgeInsets {
 
-
         return UI_USER_INTERFACE_IDIOM() == .phone
             ?  UIEdgeInsets(top: 15.25, left: 15.25, bottom: 15.25, right: 15.25) : UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
     }

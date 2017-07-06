@@ -48,7 +48,7 @@ extension FromWebViewController {
     func didDismissActionSheetWithButtonIndex(_ buttonIndex: Int, photoIndex: Int) {
     }
     
-    func removePhoto(_ browser: SKPhotoBrowser, index: Int, reload: (() -> Void)) {
+    @nonobjc func removePhoto(_ browser: SKPhotoBrowser, index: Int, reload: (() -> Void)) {
         SKCache.sharedCache.removeImageForKey("somekey")
         reload()
     }

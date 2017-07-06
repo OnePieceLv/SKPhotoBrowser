@@ -27,7 +27,6 @@ fileprivate func > <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
   }
 }
 
-
 open class SKCaptionView: UIView {
     fileprivate var photo: SKPhotoProtocol?
     fileprivate var photoLabel: UILabel!

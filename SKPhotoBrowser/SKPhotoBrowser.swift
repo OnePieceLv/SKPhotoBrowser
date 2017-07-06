@@ -7,8 +7,7 @@
 //
 
 import UIKit
-
-
+import Photos
 
 public let SKPHOTO_LOADING_DID_END_NOTIFICATION = "photoLoadingDidEndNotification"
 
@@ -24,7 +23,7 @@ open class SKPhotoBrowser: UIViewController {
     fileprivate var toolbar: SKToolbar!
 
     fileprivate var activityViewController: UIActivityViewController!
-    open var activityItemProvider: UIActivityItemProvider? = nil
+    open var activityItemProvider: UIActivityItemProvider?
     fileprivate var panGesture: UIPanGestureRecognizer!
 
     fileprivate var applicationWindow: UIWindow!
@@ -59,7 +58,7 @@ open class SKPhotoBrowser: UIViewController {
     // statusbar initial state
     private var statusbarHidden: Bool = UIApplication.shared.isStatusBarHidden
     
-    // MARK - Initializer
+    // MARK: - Initializer
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
@@ -116,10 +115,10 @@ open class SKPhotoBrowser: UIViewController {
         configureDeleteButton()
         configureToolbar()
         configurePageControl()
+        configUserGesture()
         animator.willPresent(self)
     }
 
-    
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         reloadData()
@@ -127,7 +126,7 @@ open class SKPhotoBrowser: UIViewController {
         var i = 0
         for photo: SKPhotoProtocol in photos {
             photo.index = i
-            i = i + 1
+            i += 1
         }
     }
 
@@ -154,7 +153,6 @@ open class SKPhotoBrowser: UIViewController {
         isViewActive = true
     }
     
-
     // MARK: - Notification
     open func handleSKPhotoLoadingDidEndNotification(_ notification: Notification) {
         guard let photo = notification.object as? SKPhotoProtocol else {
@@ -209,7 +207,7 @@ open class SKPhotoBrowser: UIViewController {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
     }
     
-    open func dismissPhotoBrowser(animated: Bool, completion: ((Void) -> Void)? = nil) {
+    open func dismissPhotoBrowser(animated: Bool, completion: (() -> Void)? = nil) {
         prepareForClosePhotoBrowser()
 
         if !animated {
@@ -253,7 +251,6 @@ public extension SKPhotoBrowser {
         }
     }
 }
-
 
 // MARK: - Public Function For Browser Control
 
@@ -304,7 +301,6 @@ public extension SKPhotoBrowser {
         jumpToPageAtIndex(currentPageIndex + 1)
     }
     
-
     func cancelControlHiding() {
         if controlVisibilityTimer != nil {
             controlVisibilityTimer.invalidate()
@@ -371,7 +367,6 @@ public extension SKPhotoBrowser {
         }
     }
 }
-
 
 // MARK: - Internal Function
 
@@ -511,10 +506,10 @@ internal extension SKPhotoBrowser {
         
         if let titles = SKPhotoBrowserOptions.actionButtonTitles {
             let actionSheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) -> Void in
+            actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) -> Void in
             }))
             for idx in titles.indices {
-                actionSheetController.addAction(UIAlertAction(title: titles[idx], style: .default, handler: { (action) -> Void in
+                actionSheetController.addAction(UIAlertAction(title: titles[idx], style: .default, handler: { (_) -> Void in
                     self.delegate?.didDismissActionSheetWithButtonIndex?(idx, photoIndex: self.currentPageIndex)
                 }))
             }
@@ -581,15 +576,58 @@ private extension SKPhotoBrowser {
         view.addSubview(toolbar)
     }
     
-    func configurePageControl() -> Void {
+    func configurePageControl() {
         pageControl.hidesForSinglePage = true
         pageControl.numberOfPages = numberOfPhotos
         pageControl.addTarget(self, action: #selector(selectPageControl(sender:)), for: .valueChanged)
         view.addSubview(pageControl)
     }
     
-    @objc func selectPageControl(sender: UIPageControl) -> Void {
+    @objc func selectPageControl(sender: UIPageControl) {
         jumpToPageAtIndex(sender.currentPage)
+    }
+
+    func configUserGesture() {
+        let longpress = UILongPressGestureRecognizer(target: self, action: #selector(pressAction(longPress:)))
+        longpress.minimumPressDuration = 0.5
+        self.view.addGestureRecognizer(longpress)
+    }
+    
+    @objc func pressAction(longPress: UILongPressGestureRecognizer) {
+        
+        func reusltAlertView(isSuccess: Bool, error: NSError?) {
+            var alertController: UIAlertController
+            if isSuccess {
+                alertController = UIAlertController(title: "友情提示", message: "保存成功", preferredStyle: .alert)
+            } else if let err = error {
+                alertController = UIAlertController(title: "友情提示", message: "\(err.localizedDescription)", preferredStyle: .alert)
+            } else {
+                alertController = UIAlertController(title: "友情提示", message: "保存图片出错了", preferredStyle: .alert)
+            }
+            let sureAction = UIAlertAction(title: "确定", style: .cancel, handler: nil)
+            alertController.addAction(sureAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+        
+        func savePhoto() {
+            let current = self.photoAtIndex(self.currentPageIndex)
+            if let currentImage = current.underlyingImage {
+                PHPhotoLibrary.shared().performChanges({
+                    PHAssetChangeRequest.creationRequestForAsset(from: currentImage)
+                }, completionHandler: { (isSuccess, error) in
+                    reusltAlertView(isSuccess: isSuccess, error: error as NSError?)
+                })
+            }
+        }
+        
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let saveAction = UIAlertAction(title: "保存照片", style: .default) { (_) in
+            savePhoto()
+        }
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
     }
     
     func setControlsHidden(_ hidden: Bool, animated: Bool, permanent: Bool) {
@@ -644,8 +682,7 @@ private extension SKPhotoBrowser {
     }
 }
 
-// MARK: -  UIScrollView Delegate
-
+// MARK: - UIScrollView Delegate
 extension SKPhotoBrowser: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard isViewActive else {
