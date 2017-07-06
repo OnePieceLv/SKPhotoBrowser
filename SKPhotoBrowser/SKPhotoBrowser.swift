@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Photos
 
 
 public let SKPHOTO_LOADING_DID_END_NOTIFICATION = "photoLoadingDidEndNotification"
@@ -114,6 +114,7 @@ open class SKPhotoBrowser: UIViewController {
         configureCloseButton()
         configureDeleteButton()
         configureToolbar()
+        configUserGesture()
         
         animator.willPresent(self)
     }
@@ -126,7 +127,7 @@ open class SKPhotoBrowser: UIViewController {
         var i = 0
         for photo: SKPhotoProtocol in photos {
             photo.index = i
-            i = i + 1
+            i += 1
         }
     }
 
@@ -185,7 +186,6 @@ open class SKPhotoBrowser: UIViewController {
     open func performLayout() {
         isPerformingLayout = true
         
-
         toolbar.updateToolbar(currentPageIndex)
         
         // reset local cache
@@ -250,7 +250,6 @@ public extension SKPhotoBrowser {
         }
     }
 }
-
 
 // MARK: - Public Function For Browser Control
 
@@ -580,6 +579,49 @@ private extension SKPhotoBrowser {
     func configureToolbar() {
         toolbar = SKToolbar(frame: frameForToolbarAtOrientation(), browser: self)
         view.addSubview(toolbar)
+    }
+    
+    func configUserGesture() {
+        let longpress = UILongPressGestureRecognizer(target: self, action: #selector(pressAction(longPress:)))
+        longpress.minimumPressDuration = 0.5
+        self.view.addGestureRecognizer(longpress)
+    }
+    
+    @objc func pressAction(longPress: UILongPressGestureRecognizer) {
+        
+        func reusltAlertView(isSuccess: Bool, error: NSError?) {
+            var alertController: UIAlertController
+            if isSuccess {
+                alertController = UIAlertController(title: "友情提示", message: "保存成功", preferredStyle: .alert)
+            } else if let err = error {
+                alertController = UIAlertController(title: "友情提示", message: "\(err.localizedDescription)", preferredStyle: .alert)
+            } else {
+                alertController = UIAlertController(title: "友情提示", message: "保存图片出错了", preferredStyle: .alert)
+            }
+            let sureAction = UIAlertAction(title: "确定", style: .cancel, handler: nil)
+            alertController.addAction(sureAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+        
+        func savePhoto() {
+            let current = self.photoAtIndex(self.currentPageIndex)
+            if let currentImage = current.underlyingImage {
+                PHPhotoLibrary.shared().performChanges({
+                    PHAssetChangeRequest.creationRequestForAsset(from: currentImage)
+                }, completionHandler: { (isSuccess, error) in
+                    reusltAlertView(isSuccess: isSuccess, error: error as NSError?)
+                })
+            }
+        }
+        
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let saveAction = UIAlertAction(title: "保存照片", style: .default) { (_) in
+            savePhoto()
+        }
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
     }
     
     func setControlsHidden(_ hidden: Bool, animated: Bool, permanent: Bool) {
