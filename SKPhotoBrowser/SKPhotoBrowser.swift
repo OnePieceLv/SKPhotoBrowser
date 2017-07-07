@@ -620,14 +620,51 @@ private extension SKPhotoBrowser {
             }
         }
         
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let saveAction = UIAlertAction(title: "保存照片", style: .default) { (_) in
-            savePhoto()
+        func savePhotoAlertView() {
+            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let saveAction = UIAlertAction(title: "保存照片", style: .default) { (_) in
+                PHPhotoLibrary.requestAuthorization { (status) in
+                    if status == .authorized {
+                        savePhoto()
+                    } else if status == .denied {
+                        openSetting()
+                    }
+                }
+
+            }
+            let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+            alertController.addAction(saveAction)
+            alertController.addAction(cancelAction)
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.present(alertController, animated: true, completion: nil)
+            }
+
         }
-        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
-        alertController.addAction(saveAction)
-        alertController.addAction(cancelAction)
-        present(alertController, animated: true, completion: nil)
+        
+        func openSetting() {
+            let alertController = UIAlertController(title: "无法访问照片", message: "你未开启“允许应用访问照片”选项", preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            let sure = UIAlertAction(title: "去设置", style: .default) { (_) in
+                if let url = URL(string: UIApplicationOpenSettingsURLString) {
+                    UIApplication.shared.openURL(url)
+                }
+            }
+            alertController.addAction(cancel)
+            alertController.addAction(sure)
+            if #available(iOS 9.0, *) {
+                alertController.preferredAction = sure
+            } else {
+                // Fallback on earlier versions
+            }
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+        
+        savePhotoAlertView()
+        
     }
     
     func setControlsHidden(_ hidden: Bool, animated: Bool, permanent: Bool) {
