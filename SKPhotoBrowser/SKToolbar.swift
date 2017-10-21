@@ -150,7 +150,7 @@ class SKPreviousButton: SKToolbarButton {
     }
 }
 
-class SKNextButton: SKToolbarButton {
+@objc class SKNextButton: SKToolbarButton {
     let imageName = "btn_common_forward_wh"
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

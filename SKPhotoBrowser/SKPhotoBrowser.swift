@@ -154,7 +154,7 @@ open class SKPhotoBrowser: UIViewController {
     }
     
     // MARK: - Notification
-    open func handleSKPhotoLoadingDidEndNotification(_ notification: Notification) {
+    @objc open func handleSKPhotoLoadingDidEndNotification(_ notification: Notification) {
         guard let photo = notification.object as? SKPhotoProtocol else {
             return
         }
@@ -292,12 +292,12 @@ public extension SKPhotoBrowser {
         return photos[index]
     }
     
-    func gotoPreviousPage() {
+    @objc func gotoPreviousPage() {
 
         jumpToPageAtIndex(currentPageIndex - 1)
     }
     
-    func gotoNextPage() {
+    @objc func gotoNextPage() {
         jumpToPageAtIndex(currentPageIndex + 1)
     }
     
@@ -319,7 +319,7 @@ public extension SKPhotoBrowser {
         setControlsHidden(true, animated: true, permanent: false)
     }
     
-    func hideControls(_ timer: Timer) {
+    @objc func hideControls(_ timer: Timer) {
         hideControls()
     }
     
@@ -428,7 +428,7 @@ internal extension SKPhotoBrowser {
 // MARK: - Internal Function For Button Pressed, UIGesture Control
 
 internal extension SKPhotoBrowser {
-    func panGestureRecognized(_ sender: UIPanGestureRecognizer) {
+    @objc func panGestureRecognized(_ sender: UIPanGestureRecognizer) {
         guard let zoomingScrollView: SKZoomingScrollView = pagingScrollView.pageDisplayedAtIndex(currentPageIndex) else {
             return
         }
@@ -487,17 +487,17 @@ internal extension SKPhotoBrowser {
         }
     }
     
-    func deleteButtonPressed(_ sender: UIButton) {
+    @objc func deleteButtonPressed(_ sender: UIButton) {
         delegate?.removePhoto?(self, index: currentPageIndex) { [weak self] in
             self?.deleteImage()
         }
     }
     
-    func closeButtonPressed(_ sender: UIButton) {
+    @objc func closeButtonPressed(_ sender: UIButton) {
         determineAndClose()
     }
     
-    func actionButtonPressed(ignoreAndShare: Bool) {
+    @objc func actionButtonPressed(ignoreAndShare: Bool) {
         delegate?.willShowActionSheet?(currentPageIndex)
         
         guard numberOfPhotos > 0 else {
