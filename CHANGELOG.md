@@ -1,5 +1,7 @@
 # Change Log
 
+## 4.0
+update to Swift 4.0
 ## 3.1.3
 Released on 23-9-2016
 
