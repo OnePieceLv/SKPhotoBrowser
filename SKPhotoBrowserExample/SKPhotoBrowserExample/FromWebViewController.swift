@@ -19,8 +19,8 @@ class FromWebViewController: UIViewController, SKPhotoBrowserDelegate {
         
         SKCache.sharedCache.imageCache = CustomImageCache()
         imageView.sd_setImage(with: URL(string: "https://placehold.jp/1500x1500.png")) {
-            guard let url = $0.3?.absoluteString else { return }
-            SKCache.sharedCache.setImage($0.0!, forKey: url)
+            guard let url = $3?.absoluteString else { return }
+            SKCache.sharedCache.setImage($0!, forKey: url)
         }
     }
     

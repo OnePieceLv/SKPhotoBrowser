@@ -6,9 +6,13 @@ PODS:
 DEPENDENCIES:
   - SDWebImage (~> 3.8)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - SDWebImage
+
 SPEC CHECKSUMS:
-  SDWebImage: '098e97e6176540799c27e804c96653ee0833d13c'
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
 
 PODFILE CHECKSUM: a32274f1ce260fbc242dfd48f2b1af8a84a5bc0e
 
-COCOAPODS: 1.2.0.beta.1
+COCOAPODS: 1.5.0
